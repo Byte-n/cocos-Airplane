@@ -40,7 +40,6 @@ export class enemy extends Component {
   onCollision (event: EventTouch, customEventData: string) {
     this.collider.enabled = false
     // this.playHitAnimation();
-    console.log('1');
     this.playDieAnimation();
   }
 
