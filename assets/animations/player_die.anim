@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.AnimationClip",
-    "_name": "enemy2_hit",
+    "_name": "player_die",
     "_objFlags": 0,
     "__editorExtras__": {
       "embeddedPlayerGroups": []
@@ -11,7 +11,7 @@
     "speed": 0.3,
     "wrapMode": 1,
     "enableTrsBlending": false,
-    "_duration": 0.06666666666666667,
+    "_duration": 0.23333333333333334,
     "_hash": 500763545,
     "_tracks": [
       {
@@ -63,26 +63,43 @@
     "_times": [
       0,
       0.016666666666666666,
-      0.03333333333333333,
-      0.05
+      0.05,
+      0.08333333333333333,
+      0.11666666666666667,
+      0.15,
+      0.18333333333333332,
+      0.21666666666666667
     ],
     "_values": [
       {
-        "__uuid__": "87bc36f8-6019-46b6-941a-251e1abfab50@f9941",
+        "__uuid__": "c821d7ff-d4a8-4153-a258-ee313cf259d0@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "5da1638f-4ee9-465e-be73-e09d9301d8fe@f9941",
+        "__uuid__": "af942af2-e263-4a08-9944-f4175776dfad@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "8e2397e2-9871-4492-afdc-572698d673f2@f9941",
+        "__uuid__": "aa6617b2-e99b-4ee4-9c73-30771375a6f4@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "87bc36f8-6019-46b6-941a-251e1abfab50@f9941",
+        "__uuid__": "0ce11bb2-0723-4156-9fbd-96baafae5d43@f9941",
         "__expectedType__": "cc.SpriteFrame"
-      }
+      },
+      {
+        "__uuid__": "b9391dcc-b523-403e-9e29-15869a80146d@f9941",
+        "__expectedType__": "cc.SpriteFrame"
+      },
+      {
+        "__uuid__": "6c637b31-7a3f-4cd1-aed9-dde4c85cdf9d@f9941",
+        "__expectedType__": "cc.SpriteFrame"
+      },
+      {
+        "__uuid__": "d439bb57-42db-46ed-9867-48649f67cb63@f9941",
+        "__expectedType__": "cc.SpriteFrame"
+      },
+      null
     ]
   },
   {

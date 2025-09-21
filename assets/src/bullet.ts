@@ -1,9 +1,9 @@
-import { _decorator, Component } from 'cc';
+import { _decorator, Collider2D, Component, Contact2DType, IPhysics2DContact } from 'cc';
 
 const { ccclass, property } = _decorator;
 
-@ccclass('bullet')
-export class bullet extends Component {
+@ccclass('Bullet')
+export class Bullet extends Component {
   @property
   speed: number = 300; // 子弹移动速度
 
@@ -12,8 +12,29 @@ export class bullet extends Component {
 
   private hasStarted: boolean = false;
 
+  collider: Collider2D;
+
+  moveTotal = 0;
+
   start () {
     this.hasStarted = true;
+
+    // 监听碰撞事件
+    this.collider = this.node.getComponent(Collider2D);
+    if (this.collider) {
+      this.collider.on(Contact2DType.BEGIN_CONTACT, this.onCollision, this);
+    }
+  }
+
+  onDestroy () {
+    if (this.collider) {
+      this.collider.off(Contact2DType.BEGIN_CONTACT, this.onCollision, this);
+    }
+  }
+
+  onCollision (selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
+    this.collider.enabled = false;
+    this.destroyBullet();
   }
 
   update (deltaTime: number) {
@@ -23,13 +44,17 @@ export class bullet extends Component {
     const currentPos = this.node.worldPosition;
     const newY = currentPos.y + this.speed * deltaTime;
     this.node.setWorldPosition(currentPos.x, newY, currentPos.z);
-
+    this.moveTotal += this.speed * deltaTime;
+    if (this.moveTotal > this.maxDistance) {
+      this.destroyBullet();
+    }
   }
 
   // 销毁子弹
   destroyBullet () {
     if (this.node && this.node.isValid) {
       this.node.destroy();
+      this.destroy();
     }
   }
 }

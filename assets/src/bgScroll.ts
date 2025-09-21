@@ -2,8 +2,8 @@ import { _decorator, Component, math, UITransform } from 'cc';
 
 const { ccclass, property } = _decorator;
 
-@ccclass('bgScroll')
-export class bgScroll extends Component {
+@ccclass('BgScroll')
+export class BgScroll extends Component {
   @property
   speed: number = 100;
 

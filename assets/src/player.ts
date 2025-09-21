@@ -1,4 +1,9 @@
-import { _decorator, Component, EventTouch, Node, Input, input, instantiate, Prefab, UITransform, Vec2 } from 'cc';
+import {
+  _decorator, Animation, Collider2D, Component, Contact2DType, EventTouch, Input, input, instantiate, IPhysics2DContact,
+  Node, Prefab, UITransform, Vec2,
+} from 'cc';
+import { EventCenter } from 'db://assets/src/EventCenter';
+
 
 const { ccclass, property } = _decorator;
 
@@ -8,8 +13,8 @@ enum ShootType {
   three = 3,
 }
 
-@ccclass('player')
-export class player extends Component {
+@ccclass('Player')
+export class Player extends Component {
   private isDragging: boolean = false;
   private lastTouchPos: Vec2 = new Vec2();
   private canvasSize: { width: number, height: number } = { width: 0, height: 0 };
@@ -40,12 +45,22 @@ export class player extends Component {
 
   shootType: ShootType = ShootType.three;
 
+  private animation: Animation = null;
+
+  @property(Node)
+  bodyImage: Node;
+
+  collider: Collider2D;
+
+  @property
+  hp = 3;
+
   start() {
+    this.animation = this.bodyImage.getComponent(Animation);
     // 获取画布尺寸
     const uiTransform = this.canvas.getComponent(UITransform);
     this.canvasSize.width = uiTransform.contentSize.width;
     this.canvasSize.height = uiTransform.contentSize.height;
-    console.log('this.canvasSize:', this.canvasSize);
     // 监听触摸事件
     input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     input.on(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
@@ -56,6 +71,30 @@ export class player extends Component {
     input.on(Input.EventType.MOUSE_DOWN, this.onMouseDown, this);
     input.on(Input.EventType.MOUSE_MOVE, this.onMouseMove, this);
     input.on(Input.EventType.MOUSE_UP, this.onMouseUp, this);
+
+
+    this.collider = this.bodyImage.getComponent(Collider2D);
+    if (this.collider) {
+      this.collider.on(Contact2DType.BEGIN_CONTACT, this.onCollision, this);
+    }
+  }
+
+  onCollision(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
+    if (otherCollider.node.name.includes('bullet')) {
+      return;
+    }
+    this.collider.enabled = false;
+    this.playHitAnimation(() => {
+      this.collider.enabled = true;
+    });
+    this.hp--;
+    EventCenter.getInstance().emitPlayerHpDecr(this.hp);
+    if (this.hp === 0) {
+      this.playDieAnimation(() => {
+        EventCenter.getInstance().emitPlayerDie();
+        EventCenter.getInstance().emitGameOver();
+      });
+    }
   }
 
   onDestroy() {
@@ -68,6 +107,10 @@ export class player extends Component {
     input.off(Input.EventType.MOUSE_DOWN, this.onMouseDown, this);
     input.off(Input.EventType.MOUSE_MOVE, this.onMouseMove, this);
     input.off(Input.EventType.MOUSE_UP, this.onMouseUp, this);
+
+    if (this.collider) {
+      this.collider.off(Contact2DType.BEGIN_CONTACT, this.onCollision, this);
+    }
   }
 
   onTouchStart(event: EventTouch) {
@@ -149,7 +192,6 @@ export class player extends Component {
   }
 
   private shoot() {
-
     if (this.shootType === ShootType.one) {
       this.shootCenter();
       return;
@@ -180,6 +222,44 @@ export class player extends Component {
     node = instantiate(this.bulletPrefab2);
     this.bulletParent.addChild(node);
     node.setWorldPosition(this.bulletRight.worldPosition);
+  }
+
+
+  // 播放死亡动画
+  playDieAnimation(finished: VoidFunction) {
+    if (this.animation) {
+      // 根据敌人类型播放不同的死亡动画
+      const clips = this.animation.clips;
+      const dieClip = clips.find(clip => {
+        return clip.name.includes('die');
+      });
+      if (dieClip) {
+        this.animation.on(Animation.EventType.FINISHED, () => {
+          finished();
+          this.destroyPlayer();
+        }, this);
+        this.animation.play(dieClip.name);
+      }
+    }
+  }
+
+  destroyPlayer() {
+    if (this.node && this.node.isValid) {
+      this.node.destroy();
+      this.destroy();
+    }
+  }
+
+  // 播放受伤动画
+  playHitAnimation(finished: VoidFunction) {
+    if (this.animation) {
+      const clips = this.animation.clips;
+      const hitClip = clips.find(clip => clip.name.includes('hit'));
+      if (hitClip) {
+        this.animation.on(Animation.EventType.FINISHED, finished, this);
+        this.animation.play(hitClip.name);
+      }
+    }
   }
 }
 

@@ -210,19 +210,11 @@
     "playOnLoad": false,
     "_clips": [
       {
-        "__uuid__": "637a2f35-8d6f-4ab8-b78d-bde2cebded58",
-        "__expectedType__": "cc.AnimationClip"
-      },
-      {
         "__uuid__": "157e2a8b-aa4a-43a4-a6bd-d3271b6d2a9d",
         "__expectedType__": "cc.AnimationClip"
       },
       {
         "__uuid__": "61015a04-d8c1-4d0a-b5b2-99549f2d2fb6",
-        "__expectedType__": "cc.AnimationClip"
-      },
-      {
-        "__uuid__": "ea8d2d7a-1fad-43d8-8a4b-15c286e977f4",
         "__expectedType__": "cc.AnimationClip"
       }
     ],
@@ -390,6 +382,7 @@
     "body": {
       "__id__": 2
     },
+    "hp": 20,
     "_id": ""
   },
   {
